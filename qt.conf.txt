@@ -1,0 +1,4 @@
+[Platforms]
+MacOSX {
+    frameworks = AudioToolbox AVFoundation CoreAudio CoreMedia
+}
