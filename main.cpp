@@ -3,36 +3,7 @@
 #include <QPushButton>
 #include <QtMultimedia>
 
-QVector<qint16> getSamples(QFile& file) {
-    QVector<qint16> samples;
 
-    QDataStream in(&file);
-    qDebug() << "Reading" << file.size() << "bytes";
-    while (!in.atEnd()) {
-        qint16 sample;
-        in.readRawData((char*)&sample, sizeof(sample));
-        samples.append(sample);
-    }
-    qDebug() << "Read" << samples.size() << "samples";
-
-    return samples;
-}
-
-void normalizeSamples(const QVector<qint16>& input,
-                      QVector<float>& output) {
-    // Find maximum absolute value
-    float maxValue = 0.0f;
-    for (auto sample : input) {
-        if (abs(sample) > maxValue) {
-            maxValue = abs(sample);
-        }
-    }
-
-    // Normalize samples
-    for (auto sample : input) {
-        output.push_back(static_cast<float>(sample) / maxValue);
-    }
-}
 
 class WaveformWidget : public QWidget {
 
@@ -188,13 +159,9 @@ int main(int argc, char *argv[]) {
     // Media player
     QMediaPlayer* player = new QMediaPlayer();
 
-
-
     // Connect player signals to waveform slots
     QObject::connect(player, &QMediaPlayer::positionChanged, waveform, &WaveformWidget::setPlaybackPosition);
     QObject::connect(player, &QMediaPlayer::durationChanged, waveform, &WaveformWidget::setDuration);
-
-
 
     // Playback controls
     QHBoxLayout controlLayout;
@@ -211,10 +178,6 @@ int main(int argc, char *argv[]) {
     QPushButton* stopButton = new QPushButton("Stop");
     controlLayout.addWidget(stopButton);
     QObject::connect(stopButton, &QPushButton::clicked, player, &QMediaPlayer::stop);
-
-
-
-
 
     // Connect tree view selection to populate table view
     QObject::connect(treeView->selectionModel(),
